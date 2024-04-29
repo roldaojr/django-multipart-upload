@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+  <div>
+    <a role="button" href="{% url "fileupload-create" %}">Add</a>
+  </div>
+  <table width="100%">
+    <thead>
+      <tr>
+        <td>Name</td>
+        <td>Actions</td>
+      </tr>
+    </thead>
+    {% for upload in object_list %}
+      <tr>
+        <td>{{ upload.name }}</td>
+        <td>
+          <a href="{% url 'fileupload-update' upload.pk %}">Edit</a>
+          <a href="{% url 'fileupload-delete' upload.pk %}">Delete</a>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock content %}
