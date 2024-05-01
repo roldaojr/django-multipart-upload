@@ -5,27 +5,27 @@ storages = ["django-storages", "boto3"]
 name = "django-multipart-upload"
 description = "Multi-part uploads in django forms"
 authors = ["Roldão Rego Jr. <roldaogjr@gmail.com>"]
-version = "0.1.0"
-license = "LGPL"
-readme = "README.md"
+version = "0.2"
+license = "LGPL-3.0-or-later"
+readme = "README.rst"
 keywords = ["multipart", "upload", "widget"]
 repository = "https://github.com/roldaojr/django-multipart-upload"
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
-  "License :: OSI Approved :: LGPL",
-  "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12",
+  "Framework :: Django",
+  "Programming Language :: JavaScript",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+  "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-djangorestframework = "^3.10"
-django = "4.0"
-django-storages = { version = "^1.10", optional = true }
-boto3 = { version = "^1.30", optional = true }
+djangorestframework = ">=3.10"
+django = ">=4.1"
+django-storages = { version = ">=1.10", optional = true }
+boto3 = { version = ">=1.30", optional = true }
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.4.2"
