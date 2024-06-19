@@ -45,10 +45,19 @@ document.addEventListener("DOMContentLoaded", () => {
           form._submit = form.submit;
           form.addEventListener("submit", function (e) {
             e.preventDefault();
-            dropzone.processQueue();
+            form.submit();
           });
           form.submit = () => {
-            console.debug("submit the form");
+            if (
+              dropzone.getQueuedFiles().length == 0 &&
+              inputElement.getAttribute("data-initial") == "true"
+            ) {
+              // has initial file and no queued files. submit the form
+              form._submit();
+            } else {
+              // call the queue
+              dropzone.processQueue();
+            }
             dropzone.processQueue();
           };
           this.on("addedfile", function (file) {

@@ -15,6 +15,7 @@
 <div class="dz-clickable dropzone">
   <input type="{{ widget.type }}"
          name="{{ widget.name }}"
+         data-initial="{{ widget.is_initial|yesno:'true,false' }}"
          {% include "django/forms/widgets/attrs.html" %}>
   {% include "django_multipart_upload/preview_template.html" %}
 </div>
