@@ -7,12 +7,13 @@ class MultipartUploadedFile(File):
     A file uploaded to a temporary location (i.e. stream-to-disk).
     """
 
-    def __init__(self, filename: str, committed=True, *args, **kwargs):
-        self.filename = filename
-        self._committed = committed
+    def __init__(self, original_name: str, tmp_name: str, *args, **kwargs):
+        self.original_name = original_name
+        self.filename = tmp_name.lstrip("/")
         storage_class = kwargs.pop("storage_class", DefaultStorage)
         self.storage = storage_class()
-        file = self.storage.open(filename.lstrip("/"), "rb")
+        file = self.storage.open(tmp_name.lstrip("/"), "rb")
+        # file._commited = True
         super().__init__(file, *args, **kwargs)
 
     def close(self):

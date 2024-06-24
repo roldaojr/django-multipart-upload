@@ -70,9 +70,4 @@ if MEDIA_ROOT.startswith("s3://"):
     AWS_SECRET_ACCESS_KEY = MEDIA_BUCKET_URL.password
     AWS_STORAGE_BUCKET_NAME = MEDIA_BUCKET_URL.path.strip("/")
     AWS_QUERYSTRING_EXPIRE = 3600
-
-    if MEDIA_BUCKET_URL.hostname and MEDIA_BUCKET_URL.hostname != "s3":
-        # custom S3 endpoint
-        scheme = "http" if MEDIA_BUCKET_URL.query == "insecure" else "https"
-        port = MEDIA_BUCKET_URL.port or 80 if scheme == "http" else 443
-        AWS_S3_ENDPOINT_URL = f"{scheme}://{MEDIA_BUCKET_URL.hostname}:{port}"
+    AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL", None)

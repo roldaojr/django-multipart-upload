@@ -18,8 +18,8 @@ class MultipartFileInput(ClearableFileInput):
     def value_from_datadict(self, data, files, name):
         filename = data.get(name, "").split(";")
         if len(filename) > 1:
-            original_name, new_name = filename
-            upload = MultipartUploadedFile(new_name, name=original_name)
+            original_name, tmp_name = filename
+            upload = MultipartUploadedFile(original_name, tmp_name)
             return upload
         return super().value_from_datadict(data, files, name)
 
