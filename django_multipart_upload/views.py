@@ -94,7 +94,8 @@ class BasicMultipartUploader(BaseMultipartUploader):
 
 class S3MultipartUploader(BaseMultipartUploader):
     def init_multipart_upload(self, filename, part_count):
-        filename = f"z-uploads.tmp/{filename.strip('/')}"
+        upload_id = get_random_string(32)
+        filename = f"z-uploads.tmp/{upload_id}.tmp"
         bucket_object = self.storage.bucket.Object(filename)
         upload = bucket_object.initiate_multipart_upload(
             **self.storage._get_write_parameters(bucket_object.key)

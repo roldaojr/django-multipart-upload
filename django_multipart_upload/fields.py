@@ -1,6 +1,5 @@
 from django.db.models.fields.files import FieldFile, FileField
 from storages.utils import clean_name
-from .forms import MultipartFileField
 
 
 class MultipartFieldFile(FieldFile):
@@ -12,9 +11,7 @@ class MultipartFieldFile(FieldFile):
         new_name = self.storage._normalize_name(clean_name(new_name))
         # copy file name to new_name
         new_file = self.storage.bucket.Object(new_name)
-        tmp_file = self.storage.bucket.Object(name)
-        new_file.copy_from(CopySource=f"{self.storage.bucket.name}/{name}")
-        tmp_file.delete()
+        new_file.copy_from(CopySource=f"{self.storage.bucket.name}/{content.tmp_name}")
         # set new name
         self.name = new_name
         setattr(self.instance, self.field.attname, self.name)

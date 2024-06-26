@@ -19,9 +19,11 @@ class MultipartFileInput(ClearableFileInput):
         filename = data.get(name, "").split(";")
         if len(filename) > 1:
             original_name, tmp_name = filename
-            upload = MultipartUploadedFile(original_name, tmp_name)
-            return upload
-        return super().value_from_datadict(data, files, name)
+        else:
+            original_name = filename
+            tmp_name = filename
+        upload = MultipartUploadedFile(original_name, tmp_name)
+        return upload
 
     class Media:
         js = [
