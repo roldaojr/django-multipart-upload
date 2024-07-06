@@ -1,6 +1,7 @@
 from django.urls import path, re_path
-from .views import MultiPartUploadView
+
 from . import settings
+from .views import MultiPartUploadView
 
 urlpatterns = [
     re_path(

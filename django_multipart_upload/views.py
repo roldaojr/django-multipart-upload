@@ -1,17 +1,17 @@
 from urllib.parse import quote
+
 from django.conf import settings as django_settings
-from django.urls import reverse
 from django.core.exceptions import BadRequest
-from django.utils.crypto import get_random_string
 from django.core.files.storage import DefaultStorage, Storage
+from django.urls import reverse
+from django.utils.crypto import get_random_string
+from rest_framework.exceptions import NotFound
+from rest_framework.parsers import FileUploadParser, FormParser, JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.parsers import JSONParser, FormParser, FileUploadParser
-from rest_framework.exceptions import NotFound
-from .serializers import (
-    CompleteMultipartUploadSerializer,
-)
+
 from . import settings
+from .serializers import CompleteMultipartUploadSerializer
 
 
 class BaseMultipartUploader:
@@ -19,20 +19,20 @@ class BaseMultipartUploader:
         self.storage = storage
 
     def init_multipart_upload(self, filename: str, part_count: int) -> Response:
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def put_multipart_upload(
         self, filename: str, upload_id: str, part_num: int, file_data
     ) -> Response:
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def complete_multipart_upload(
         self, filename: str, upload_id: str, parts_data: dict
     ) -> Response:
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def abort_multipart_upload(self, filename: str, upload_id: str) -> Response:
-        raise NotImplemented()
+        raise NotImplementedError()
 
 
 class BasicMultipartUploader(BaseMultipartUploader):

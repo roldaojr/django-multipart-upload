@@ -1,4 +1,5 @@
 from typing import Any
+
 from django.conf import settings as django_settings
 
 PREFIX = "MULTIPART_UPLOAD"

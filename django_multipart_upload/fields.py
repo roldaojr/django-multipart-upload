@@ -10,8 +10,14 @@ class MultipartFieldFile(FieldFile):
         new_name = self.field.generate_filename(self.instance, content.original_name)
         new_name = self.storage._normalize_name(clean_name(new_name))
         # copy file name to new_name
-        new_file = self.storage.bucket.Object(new_name)
-        new_file.copy_from(CopySource=f"{self.storage.bucket.name}/{content.tmp_name}")
+        self.storage.connection.meta.client.copy(
+            {
+                "Bucket": self.storage.bucket_name,
+                "Key": content.tmp_name,
+            },
+            self.storage.bucket_name,
+            new_name,
+        )
         # set new name
         self.name = new_name
         setattr(self.instance, self.field.attname, self.name)
