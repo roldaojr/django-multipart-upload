@@ -1,6 +1,5 @@
 from urllib.parse import quote
 
-from django.conf import settings as django_settings
 from django.core.exceptions import BadRequest
 from django.core.files.storage import DefaultStorage, Storage
 from django.urls import reverse
@@ -85,7 +84,7 @@ class BasicMultipartUploader(BaseMultipartUploader):
         self.storage.delete(self.get_tmp_upload_path(upload_id))
 
         # File upload complete
-        return Response({"Location": f"{django_settings.MEDIA_URL}{filename}"})
+        return Response({"Location": f"{self.storage.url(filename)}"})
 
     def abort_multipart_upload(self, filename, upload_id):
         self.storage.delete(self.get_tmp_upload_path(upload_id))

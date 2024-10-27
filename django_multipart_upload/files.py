@@ -23,9 +23,9 @@ class MultipartUploadedFile(File):
             storage_class = kwargs.pop("storage_class", DefaultStorage)
             self.storage = storage_class()
             if hasattr(self.storage, "bucket"):
-                file = TemporaryS3File(tmp_name.lstrip("/"), "rb", self.storage)
+                file = TemporaryS3File(self.tmp_name, "rb", self.storage)
             else:
-                file = self.storage.open(tmp_name.lstrip("/"), "rb")
+                file = self.storage.open(self.tmp_name, "rb")
             request_finished.connect(self.close)
         super().__init__(file, name=original_name, *args, **kwargs)
 

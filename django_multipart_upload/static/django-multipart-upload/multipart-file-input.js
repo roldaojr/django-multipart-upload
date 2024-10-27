@@ -1,15 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const multipartFileInputs = {};
   document
     .querySelectorAll("input[type=file].multipart")
     .forEach((inputElement) => {
+      // ignore formset input template
+      if (inputElement.name.includes("__prefix__")) return;
+      // get elements
       const form = inputElement.closest("form");
       const dzElement = inputElement.parentElement;
       const templateElement = dzElement.querySelector(".preview-template");
       const previewsElement = dzElement.querySelector(".dz-files");
+      const noFileElement = dzElement.querySelector(".dz-no-file");
       const submitButton = form.querySelector(
         "button[type=submit], input[type=submit]"
       );
-      // values
+      // get widget values
       const csrfToken = form.querySelector("[name=csrfmiddlewaretoken]").value;
       const chunkSize = parseInt(inputElement.getAttribute("data-chunk-size"));
       const uploadUrl = inputElement
@@ -17,7 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
         .trimEnd("/");
       // change element type do hidden
       inputElement.setAttribute("type", "hidden");
-      const dropzone = new Dropzone(dzElement, {
+      // init dropzone
+      const dropzone = new Dropzone(inputElement, {
         method: "put",
         timeout: 3600000,
         headers: {
@@ -38,45 +44,29 @@ document.addEventListener("DOMContentLoaded", () => {
         maxFiles: 1,
         binaryBody: true,
         previewTemplate: templateElement ? templateElement.innerHTML : "",
-        previewsContainer: dzElement,
+        previewsContainer: previewsElement,
         clickable: dzElement,
         init: function () {
-          const dropzone = this;
-          form._submit = form.submit;
-          form.addEventListener("submit", function (e) {
-            e.preventDefault();
-            form.submit();
-          });
-          form.submit = () => {
-            if (
-              dropzone.getQueuedFiles().length == 0 &&
-              inputElement.getAttribute("data-initial") == "true"
-            ) {
-              // has initial file and no queued files. submit the form
-              form._submit();
-            } else {
-              // call the queue
-              dropzone.processQueue();
-            }
-            dropzone.processQueue();
-          };
           this.on("addedfile", function (file) {
             // remove extra files
             while (this.files.length > this.options.maxFiles) {
               this.removeFile(this.files[0]);
             }
+            noFileElement.style.display = "none";
+          });
+          this.on("removedfile", function (file) {
+            noFileElement.style.display = "";
           });
           this.on("sending", function (file) {
             submitButton.setAttribute("disabled", "");
           });
-          this.on("complete", function (file) {
-            submitButton.removeAttribute("disabled");
-            if (file.status == "success") {
-              form._submit();
-            }
-          });
           this.on("success", function (file) {
             inputElement.value = `${file.name};${file.upload.multipart.server_id}`;
+          });
+          this.on("complete", function (file) {
+            submitButton.removeAttribute("disabled");
+            multipartFileInputs[inputElement.name].status = "complete";
+            form.submit();
           });
         },
         accept: function (file, done) {
@@ -86,7 +76,12 @@ document.addEventListener("DOMContentLoaded", () => {
           const partCount = Math.ceil(file.upload.total / chunkSize);
           url.searchParams.set("partCount", partCount);
           fetch(url)
-            .then((res) => res.json())
+            .then((res) => {
+              if (res.status == 200) return res.json();
+              throw new Error(
+                `Init multipart upload failed with status ${res.status}`
+              );
+            })
             .then((data) => {
               file.upload.multipart = data;
               this.emit("acceptedfile", file);
@@ -133,5 +128,39 @@ document.addEventListener("DOMContentLoaded", () => {
             .catch((err) => done(err));
         },
       });
+      multipartFileInputs[inputElement.name] = {
+        dropzone: dropzone,
+        element: inputElement,
+        status: "pedinng",
+      };
+
+      if (form._mpfi_submit) return;
+      // add submit handler
+      form._mpfi_submit = form.submit;
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        form.submit();
+      });
+      form.submit = () => {
+        Object.values(multipartFileInputs).forEach((input) => {
+          if (
+            input.dropzone.getQueuedFiles().length == 0 &&
+            input.status != "complete"
+          ) {
+            // has initial file and no queued files. set status to complete
+            input.status = "complete";
+          } else {
+            // call the queue
+            input.dropzone.processQueue();
+          }
+        });
+        if (
+          Object.values(multipartFileInputs).every(
+            (i) => i.status == "complete"
+          )
+        ) {
+          return form._mpfi_submit();
+        }
+      };
     });
 });

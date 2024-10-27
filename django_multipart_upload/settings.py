@@ -12,3 +12,4 @@ def get_setting(name: str, default: Any = None) -> Any:
 
 TMP_PATH = get_setting("TMP_PATH", "z-uploads.tmp")
 CHUNK_SIZE = get_setting("CHUNK_SIZE", 50 * 1024 * 1024)
+DEFAULT_ACL = getattr(django_settings, "AWS_DEFAULT_ACL", None)

@@ -1,6 +1,7 @@
-{% if widget.is_initial %}
-  <div>
-    {{ widget.initial_text }}: <a href="{{ widget.value.url }}">{{ widget.value }}</a>
+<p>
+  {% if widget.is_initial %}
+    {{ widget.initial_text }}:
+    <a href="{{ widget.value.url }}">{{ widget.value }}</a>
     {% if not widget.required %}
       <input type="checkbox"
              name="{{ widget.checkbox_name }}"
@@ -9,13 +10,20 @@
              {% if widget.attrs.checked %}checked{% endif %}>
       <label for="{{ widget.checkbox_id }}">{{ widget.clear_checkbox_label }}</label>
     {% endif %}
-  </div>
-  {{ widget.input_text }}:
-{% endif %}
-<div class="dz-clickable dropzone">
-  <input type="{{ widget.type }}"
-         name="{{ widget.name }}"
-         data-initial="{{ widget.is_initial|yesno:'true,false' }}"
-         {% include "django/forms/widgets/attrs.html" %}>
-  {% include "django_multipart_upload/preview_template.html" %}
-</div>
+    <br>
+    {{ widget.input_text }}:
+  {% endif %}
+  <nobr>
+    <span class="dz-clickable dropzone">
+      <button type="button" class="input-group-text">Escolher arquivo</button>
+      <span class="dz-files">
+        <span class="dz-no-file">Nenhum arquivo escolhido</span>
+      </span>
+      {% include "django_multipart_upload/preview_template.html" %}
+      <input type="{{ widget.type }}"
+             name="{{ widget.name }}"
+             data-initial="{{ widget.is_initial|yesno:'true,false' }}"
+             {% include "django/forms/widgets/attrs.html" %}>
+    </span>
+  </nobr>
+</p>
