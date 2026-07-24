@@ -1,9 +1,11 @@
-=======================
-django-multipart-upload
-=======================
+====================================
+django-multipart-upload (deprecated)
+====================================
 
 A drop in replacement for Django Admin using django class based views.
 The interface made with semantic-ui framework.
+
+Replaced by https://github.com/roldaojr/django-uppy
 
 The admin uses the following existing django apps.
 
